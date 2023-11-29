@@ -20,14 +20,7 @@ public:
 
   uint32_t pwm_value_map(int32_t x, int32_t min_in, int32_t max_in, int32_t min_out, int32_t max_out);
 
-  void setPwmValue(int U, int V, int W); // range: [0, 100]
-
-  void bldc_set_phase_up_vm();
-  void bldc_set_phase_wp_um();
-  void bldc_set_phase_wp_vm();
-  void bldc_set_phase_vp_um();
-  void bldc_set_phase_vp_wm();
-  void bldc_set_phase_up_wm();
+  void setPwmValue(int U, int V, int W); // range: 
 
   int pwmU_h, pwmU_l;  //!< phase U pwm pin number
   int pwmV_h, pwmV_l;  //!< phase V pwm pin number

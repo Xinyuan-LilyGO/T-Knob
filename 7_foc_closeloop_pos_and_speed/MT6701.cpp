@@ -113,25 +113,30 @@ float MT6701Sensor::getSensorAngle() {
   if (rad < 0) {
     rad += 2 * PI;
   }
-  rad = rad * 100;
-  rad = rad / 100;
   return rad;
 }
 
-float MT6701Sensor::getAngle() {
+void MT6701Sensor::update() {
   float val = getSensorAngle();
   float d_angle = val - angle_prev;
   if (abs(d_angle) > (0.8f * 6.28318530718f)) full_rotations += (d_angle > 0) ? -1 : 1;
   angle_prev = val;
+}
+
+float MT6701Sensor::getMechanicalAngle() {
+  return angle_prev;
+}
+
+float MT6701Sensor::getAngle() {
   return (float)full_rotations * 6.28318530718f + angle_prev;
 }
 
-void MT6701Sensor::update()
-{
-  float val = getSensorAngle();
-  float d_angle = val - angle_prev;
-  if (abs(d_angle) > (0.8f * 6.28318530718f)) full_rotations += (d_angle > 0) ? -1 : 1;
-  angle_prev = val;
+double MT6701Sensor::getPreciseAngle() {
+    return (double)full_rotations * (double)6.28318530718f + (double)angle_prev;
+}
+
+int32_t MT6701Sensor::getFullRotations() {
+    return full_rotations;
 }
 
 MT6701Error MT6701Sensor::getAndClearError() {

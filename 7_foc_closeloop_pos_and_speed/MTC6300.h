@@ -12,22 +12,13 @@
 #define WH_PIN 0
 #define WL_PIN 4
 
-class MTC6300MotorDriver {
+class MTC6300Driver {
 public:
-  MTC6300MotorDriver(int Uh = UH_PIN, int Ul=UL_PIN, int Vh=VH_PIN, int Vl=VL_PIN, int Wh=WH_PIN, int Wl=WL_PIN, int fault_pin=BLDC_DRV_FAULT_GPIO);
+  MTC6300Driver(int Uh = UH_PIN, int Ul=UL_PIN, int Vh=VH_PIN, int Vl=VL_PIN, int Wh=WH_PIN, int Wl=WL_PIN, int fault_pin=BLDC_DRV_FAULT_GPIO);
 
   void init();
 
-  uint32_t pwm_value_map(int32_t x, int32_t min_in, int32_t max_in, int32_t min_out, int32_t max_out);
-
   void setPwmValue(int U, int V, int W); // range: [0, 100]
-
-  void bldc_set_phase_up_vm();
-  void bldc_set_phase_wp_um();
-  void bldc_set_phase_wp_vm();
-  void bldc_set_phase_vp_um();
-  void bldc_set_phase_vp_wm();
-  void bldc_set_phase_up_wm();
 
   int pwmU_h, pwmU_l;  //!< phase U pwm pin number
   int pwmV_h, pwmV_l;  //!< phase V pwm pin number
@@ -38,6 +29,8 @@ private:
   uint32_t mcpwm_timer_resolution_hz = 10000000;  // 10MHz, 1 tick = 0.1us
   uint16_t mcpwm_period = 500;                    // 50us, 20KHz
   bool spin_direction_ccw = false;                // define the spin direction
+
+  uint32_t pwm_value_map(int32_t x, int32_t min_in, int32_t max_in, int32_t min_out, int32_t max_out);
 
   enum{
     BLDC_MCPWM_OP_INDEX_U = 0,

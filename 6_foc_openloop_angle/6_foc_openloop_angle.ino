@@ -12,9 +12,6 @@ float velocity_limit = 3;
 float shaft_angle = 0, open_loop_timestamp = 0;
 float zero_electric_angle = 0, Ualpha, Ubeta = 0, Ua = 0, Ub = 0, Uc = 0, dc_a = 0, dc_b = 0, dc_c = 0;
 
-float angle_value = 3;
-int rotation_direction = 1;  // 1:anticlockwise; -1:clockwise
-
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
@@ -51,10 +48,9 @@ void setPwm(float Ua, float Ub, float Uc) {
   dc_a = (dc_a * 100 * 255) / 100;
   dc_b = (dc_b * 100 * 255) / 100;
   dc_c = (dc_c * 100 * 255) / 100;
-  printf("%d,%d,%d\n", (int)dc_a, (int)dc_b, (int)dc_c);
+  // printf("%d,%d,%d\n", (int)dc_a, (int)dc_b, (int)dc_c);
   drive.setPwmValue((int)dc_a, (int)dc_b, (int)dc_c);
 }
-
 
 void setPhaseVoltage(float Uq, float Ud, float angle_el) {
   angle_el = _normalizeAngle(angle_el + zero_electric_angle);
@@ -79,18 +75,15 @@ float angleOpenloop(float target_angle) {
 
   if(abs( target_angle - shaft_angle ) > abs(velocity_limit*Ts)){
     shaft_angle += _sign(target_angle - shaft_angle) * abs( velocity_limit )*Ts;
-    // shaft_velocity = velocity_limit;
   }else{
     shaft_angle = target_angle;
-    // shaft_velocity = 0;
   }
-
 
   // use voltage limit or current limit
   float Uq = voltage_power_supply / 3;  
 
   setPhaseVoltage(Uq, 0, _electricalAngle(_normalizeAngle(shaft_angle), 7));  // set the maximal allowed voltage (voltage_limit) with the necessary angle
-
+   printf("%0.3f, %0.3f\n", Uq, _electricalAngle(_normalizeAngle(shaft_angle), 7));
   open_loop_timestamp = now_us;  // save timestamp for next call
 
   return Uq;

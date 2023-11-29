@@ -137,13 +137,6 @@ uint32_t MTC6300MotorDriver::pwm_value_map(int32_t x, int32_t min_in, int32_t ma
     if(max_in <= min_in && x <= max_in) return max_out;
     if(max_in <= min_in && x >= min_in) return min_out;
 
-    /**
-     * The equation should be:
-     *   ((x - min_in) * delta_out) / delta in) + min_out
-     * To avoid rounding error reorder the operations:
-     *   (x - min_in) * (delta_out / delta_min) + min_out
-     */
-
     int32_t delta_in = max_in - min_in;
     int32_t delta_out = max_out - min_out;
 
@@ -160,7 +153,6 @@ void MTC6300MotorDriver::setPwmValue(int U, int V, int W)
   ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(comparators[BLDC_MCPWM_OP_INDEX_V], w_pwm));
   ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(comparators[BLDC_MCPWM_OP_INDEX_W], v_pwm));
 
-  // U+ = PWM, U- = _PWM_
   mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_U][BLDC_MCPWM_GEN_INDEX_HIGH], -1, true);
   mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_U][BLDC_MCPWM_GEN_INDEX_LOW], -1, true);
   mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_V][BLDC_MCPWM_GEN_INDEX_HIGH], -1, true);
@@ -168,96 +160,3 @@ void MTC6300MotorDriver::setPwmValue(int U, int V, int W)
   mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_W][BLDC_MCPWM_GEN_INDEX_HIGH], -1, true);
   mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_W][BLDC_MCPWM_GEN_INDEX_LOW], -1, true);
 }
-
-// U+V-
-void MTC6300MotorDriver::bldc_set_phase_up_vm()
-{
-  // U+ = PWM, U- = _PWM_
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_U][BLDC_MCPWM_GEN_INDEX_HIGH], -1, true);
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_U][BLDC_MCPWM_GEN_INDEX_LOW], -1, true);
-
-  // V+ = 0, V- = 1  --[because gen_low is inverted by dead time]--> V+ = 0, V- = 0
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_V][BLDC_MCPWM_GEN_INDEX_HIGH], 0, true);
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_V][BLDC_MCPWM_GEN_INDEX_LOW], 0, true);
-
-  // W+ = 0, W- = 0  --[because gen_low is inverted by dead time]--> W+ = 0, W- = 1
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_W][BLDC_MCPWM_GEN_INDEX_HIGH], 0, true);
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_W][BLDC_MCPWM_GEN_INDEX_LOW], 1, true);
-}
-
-// W+U-
-void MTC6300MotorDriver::bldc_set_phase_wp_um() {
-  // U+ = 0, U- = 1  --[because gen_low is inverted by dead time]--> U+ = 0, U- = 0
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_U][BLDC_MCPWM_GEN_INDEX_HIGH], 0, true);
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_U][BLDC_MCPWM_GEN_INDEX_LOW], 0, true);
-
-  // V+ = 0, V- = 0  --[because gen_low is inverted by dead time]--> V+ = 0, V- = 1
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_V][BLDC_MCPWM_GEN_INDEX_HIGH], 0, true);
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_V][BLDC_MCPWM_GEN_INDEX_LOW], 1, true);
-
-  // W+ = PWM, W- = _PWM_
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_W][BLDC_MCPWM_GEN_INDEX_HIGH], -1, true);
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_W][BLDC_MCPWM_GEN_INDEX_LOW], -1, true);
-}
-
-// W+V-
-void MTC6300MotorDriver::bldc_set_phase_wp_vm() {
-  // U+ = 0, U- = 0  --[because gen_low is inverted by dead time]--> U+ = 0, U- = 1
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_U][BLDC_MCPWM_GEN_INDEX_HIGH], 0, true);
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_U][BLDC_MCPWM_GEN_INDEX_LOW], 1, true);
-
-  // V+ = 0, V- = 1  --[because gen_low is inverted by dead time]--> V+ = 0, V- = 0
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_V][BLDC_MCPWM_GEN_INDEX_HIGH], 0, true);
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_V][BLDC_MCPWM_GEN_INDEX_LOW], 0, true);
-
-  // W+ = PWM, W- = _PWM_
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_W][BLDC_MCPWM_GEN_INDEX_HIGH], -1, true);
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_W][BLDC_MCPWM_GEN_INDEX_LOW], -1, true);
-}
-
-// V+U-
-void MTC6300MotorDriver::bldc_set_phase_vp_um() {
-  // U+ = 0, U- = 1  --[because gen_low is inverted by dead time]--> U+ = 0, U- = 0
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_U][BLDC_MCPWM_GEN_INDEX_HIGH], 0, true);
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_U][BLDC_MCPWM_GEN_INDEX_LOW], 0, true);
-
-  // V+ = PWM, V- = _PWM_
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_V][BLDC_MCPWM_GEN_INDEX_HIGH], -1, true);
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_V][BLDC_MCPWM_GEN_INDEX_LOW], -1, true);
-
-  // W+ = 0, W- = 0  --[because gen_low is inverted by dead time]--> W+ = 0, W- = 1
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_W][BLDC_MCPWM_GEN_INDEX_HIGH], 0, true);
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_W][BLDC_MCPWM_GEN_INDEX_LOW], 1, true);
-}
-
-// V+W-
-void MTC6300MotorDriver::bldc_set_phase_vp_wm() {
-  // U+ = 0, U- = 0  --[because gen_low is inverted by dead time]--> U+ = 0, U- = 1
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_U][BLDC_MCPWM_GEN_INDEX_HIGH], 0, true);
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_U][BLDC_MCPWM_GEN_INDEX_LOW], 1, true);
-
-  // V+ = PWM, V- = _PWM_
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_V][BLDC_MCPWM_GEN_INDEX_HIGH], -1, true);
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_V][BLDC_MCPWM_GEN_INDEX_LOW], -1, true);
-
-  // W+ = 0, W- = 1  --[because gen_low is inverted by dead time]--> W+ = 0, W- = 0
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_W][BLDC_MCPWM_GEN_INDEX_HIGH], 0, true);
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_W][BLDC_MCPWM_GEN_INDEX_LOW], 0, true);
-}
-
-// U+W- / A+C-
-void MTC6300MotorDriver::bldc_set_phase_up_wm() {
-  // U+ = PWM, U- = _PWM_
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_U][BLDC_MCPWM_GEN_INDEX_HIGH], -1, true);
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_U][BLDC_MCPWM_GEN_INDEX_LOW], -1, true);
-
-  // V+ = 0, V- = 0  --[because gen_low is inverted by dead time]--> V+ = 0, V- = 1
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_V][BLDC_MCPWM_GEN_INDEX_HIGH], 0, true);
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_V][BLDC_MCPWM_GEN_INDEX_LOW], 1, true);
-
-  // W+ = 0, W- = 1  --[because gen_low is inverted by dead time]--> W+ = 0, W- = 0
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_W][BLDC_MCPWM_GEN_INDEX_HIGH], 0, true);
-  mcpwm_generator_set_force_level(generators[BLDC_MCPWM_OP_INDEX_W][BLDC_MCPWM_GEN_INDEX_LOW], 0, true);
-}
-
-
