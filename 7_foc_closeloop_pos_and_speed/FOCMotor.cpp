@@ -1,10 +1,9 @@
 
 #include "FOCMotor.h"
 
-
+int pole_pairs = 7;        // Configuration according to motor parameters
+int sensor_direction = -1; // Configuration according to motor parameters
 float voltage_power_supply = 0;
-int sensor_direction = -1; // 
-int pole_pairs = 7;
 float zero_electric_angle = 0;
 float Ualpha, Ubeta = 0, Ua = 0, Ub = 0, Uc = 0;
 
@@ -18,15 +17,13 @@ void FOCMotorInit(float power_supply) {
   sensor.init();
 }
 
-void FOCMotorAlignSensor(int dr, int pp) {
-  sensor_direction = dr;
-  pole_pairs = pp;
+void FOCMotorAlignSensor() {
   // align sensor
   FOCSetTorque(3, _3PI_2);
   delay(700);
   zero_electric_angle = electricalAngle();
   FOCSetTorque(0, _3PI_2);
-  Serial.print("2.zero_electric_angle:");
+  Serial.print("zero_electric_angle:");
   Serial.println(zero_electric_angle);
 }
 
