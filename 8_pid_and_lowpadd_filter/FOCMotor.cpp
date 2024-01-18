@@ -183,7 +183,7 @@ void SetTorque(float target)
 /****************************************************************************************************
  *                                        Serial port 
  ****************************************************************************************************/
-float motor_target = 0;
+float motor_target = 5;
 int commaPosition;
 String serialReceiveUserCommand() {
 

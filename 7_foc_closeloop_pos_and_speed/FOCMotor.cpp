@@ -75,7 +75,7 @@ void FOCSetTorque(float Uq, float angle_el) {
 }
 
 //==============串口接收==============
-float motor_target = 0;
+float motor_target = 5;
 int commaPosition;
 String serialReceiveUserCommand() {
 

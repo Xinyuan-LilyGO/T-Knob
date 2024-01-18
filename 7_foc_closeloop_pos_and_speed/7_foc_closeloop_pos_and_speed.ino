@@ -10,7 +10,7 @@ void setup() {
 void loop() {
 // 1:closed-loop angle demo
 // 0:closed-loop velocity demo
-#if 1 //   
+#if 0 //   
   float Kp = 0.056;  // Adjust Kp to change torque
   float Sensor_Angle = sensor.getAngle();
   FOCSetTorque(_constrain(Kp * (getSerialDate() + FOCGetSensorDirection() * Sensor_Angle) * 180 / PI, -2, 2), electricalAngle());
