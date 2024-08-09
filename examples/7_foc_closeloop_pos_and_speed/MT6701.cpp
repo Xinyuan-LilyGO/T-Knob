@@ -124,19 +124,23 @@ void MT6701Sensor::update() {
 }
 
 float MT6701Sensor::getMechanicalAngle() {
+  update();
   return angle_prev;
 }
 
 float MT6701Sensor::getAngle() {
+  update();
   return (float)full_rotations * 6.28318530718f + angle_prev;
 }
 
 double MT6701Sensor::getPreciseAngle() {
-    return (double)full_rotations * (double)6.28318530718f + (double)angle_prev;
+  update();
+  return (double)full_rotations * (double)6.28318530718f + (double)angle_prev;
 }
 
 int32_t MT6701Sensor::getFullRotations() {
-    return full_rotations;
+  update();
+  return full_rotations;
 }
 
 MT6701Error MT6701Sensor::getAndClearError() {

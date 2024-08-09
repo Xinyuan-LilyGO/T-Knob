@@ -4,8 +4,13 @@
 /****************************************************************************************************
  *                                          FOC Motor
  ****************************************************************************************************/
+// -1 , -1
+// 1 , -1
+
+
 float voltage_power_supply = 5;
 int sensor_direction = -1;  // anticlockwise
+int coil_dir = -1;
 int pole_pairs = 7;
 float zero_electric_angle = 0;
 float Ualpha, Ubeta = 0, Ua = 0, Ub = 0, Uc = 0;
@@ -65,7 +70,7 @@ void setPwm(float Ua, float Ub, float Uc) {
 void FOCSetTorque(float Uq, float angle_el) {
   Uq = _constrain(Uq, -voltage_power_supply / 2, voltage_power_supply / 2);
 
-  angle_el = _normalizeAngle(angle_el + zero_electric_angle);
+  angle_el = _normalizeAngle(angle_el);
   // 帕克逆变换
   Ualpha = -Uq * sin(angle_el);
   Ubeta = Uq * cos(angle_el);
@@ -129,7 +134,7 @@ float LFGetVelocity()
 void SetVelocityLoop(float target)
 {
   float lf_velocity = LFGetVelocity();
-  float Uq = PIDGetVelocityOutput((target + lf_velocity) * 180 / PI);
+  float Uq = PIDGetVelocityOutput((target + coil_dir * lf_velocity) * 180 / PI);
   FOCSetTorque(Uq, electricalAngle());
 
 #ifdef DEF_DEBUG_ENABLE
@@ -145,7 +150,7 @@ void SetVelocityLoop(float target)
 void SetVelocityAngleLoop(float target)
 {
   float angle = sensor.getAngle() * sensor_direction;
-  float angle_pid_out = PIDGetAngleOutput((target + angle) * 180 / PI);
+  float angle_pid_out = PIDGetAngleOutput((target + coil_dir * angle) * 180 / PI);
   float Uq = PIDGetVelocityOutput(angle_pid_out);
   FOCSetTorque(Uq, electricalAngle());
 
@@ -162,7 +167,7 @@ void SetVelocityAngleLoop(float target)
 void SetForceAngleLoop(float target)
 {
   float angle = sensor.getAngle() * sensor_direction;
-  float Uq = PIDGetAngleOutput((target + angle) * 180 / PI);
+  float Uq = PIDGetAngleOutput((target + coil_dir * angle) * 180 / PI);
   FOCSetTorque(Uq, electricalAngle());
 #ifdef DEF_DEBUG_ENABLE
   static int cnt = 0;

@@ -51,37 +51,52 @@ int mode = 0;
 int mode_prev = 0;
 void loop() {
 
-  mode = GetBntState(boot_btn) % 4;
+  mode = GetBntState(boot_btn) % 6;
   if (mode != mode_prev) {
-    printf("mode=%d\n", mode);
+    switch (mode) {
+      case 0: printf("mode=%d, Velocity Angle Ctrl\n", mode); break;
+      case 1: printf("mode=%d, Angle Ctrl\n", mode); break;
+      case 2: printf("mode=%d, Velocity Ctrl\n", mode); break;
+      case 3: printf("mode=%d, Velocity Torque Ctrl\n", mode); break;
+      case 4: printf("mode=%d, Torque Ctrl\n", mode); break;
+      case 5: printf("mode=%d, Led & Buzzer ON\n", mode); break;
+      default: break;
+    }
     mode_prev = mode;
   }
 
   switch (mode) {
-    case 0:
+    case 0:{
       digitalWrite(led1, HIGH);
       digitalWrite(led2, HIGH);
       digitalWrite(led3, HIGH);
       digitalWrite(led4, HIGH);
       analogWrite(buzz, 0);
-      PIDSetVelocityParam(0.002, 0.1, 0, 0);
-      SetVelocityLoop(getSerialDate());
-      printf("Velocity Ctrl\n");
-      break;
-    case 1:
       PIDSetVelocityParam(0.1, 0.2, 0.001, 0);
       PIDSetAngleParam(0.25, 0, 0, 0);
-      SetVelocityAngleLoop(getSerialDate());
-      printf("Velocity Angle Ctrl\n");
+      SetVelocityAngleLoop(0);
+    }
+      break;
+    case 1:
+      PIDSetAngleParam(0.056, 0, 0, 0);
+      SetForceAngleLoop(0);
       break;
     case 2:
-      PIDSetAngleParam(0.056, 0, 0, 0);
-      SetForceAngleLoop(getSerialDate());
-      printf("Angle Ctrl\n");
+      PIDSetVelocityParam(0.002, 0.1, 0, 0);
+      SetVelocityLoop(2.5);
       break;
     case 3:
-      SetTorque(getSerialDate());
-      printf("Torque Ctrl\n");
+      SetTorque(2);
+      break;
+    case 4:
+      FOCSetTorque(3, 0);
+      break;
+    case 5:
+      digitalWrite(led1, LOW);
+      digitalWrite(led2, LOW);
+      digitalWrite(led3, LOW);
+      digitalWrite(led4, LOW);
+      analogWrite(buzz, 100);
       break;
     default:
       break;

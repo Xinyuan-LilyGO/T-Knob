@@ -5,7 +5,7 @@
 #define PIN_WH 0
 #define PIN_WL 4
 
-bool direction_of_rotation = 1;  // 1：顺时针；0：逆时针
+bool direction_of_rotation = 0;  // 1：顺时针；0：逆时针
 
 void set_au_bd(void) {
   digitalWrite(PIN_UH, HIGH);

@@ -20,7 +20,7 @@ void FOCMotorInit(float power_supply) {
 void FOCMotorAlignSensor() {
   // align sensor
   FOCSetTorque(3, _3PI_2);
-  delay(700);
+  delay(3000);
   zero_electric_angle = electricalAngle();
   FOCSetTorque(0, _3PI_2);
   Serial.print("zero_electric_angle:");
@@ -55,14 +55,14 @@ void setPwm(float Ua, float Ub, float Uc) {
   dc_a = (dc_a * 100 * 255) / 100;
   dc_b = (dc_b * 100 * 255) / 100;
   dc_c = (dc_c * 100 * 255) / 100;
-  // printf("%d,%d,%d\r\n", (int)dc_a, (int)dc_b, (int)dc_c);
+  printf("%d,%d,%d\r\n", (int)dc_a, (int)dc_b, (int)dc_c);
   drive.setPwmValue((int)dc_a, (int)dc_b, (int)dc_c);
 }
 
 void FOCSetTorque(float Uq, float angle_el) {
   Uq = _constrain(Uq, -voltage_power_supply / 2, voltage_power_supply / 2);
 
-  angle_el = _normalizeAngle(angle_el + zero_electric_angle);
+  angle_el = _normalizeAngle(angle_el);
   // 帕克逆变换
   Ualpha = -Uq * sin(angle_el);
   Ubeta = Uq * cos(angle_el);

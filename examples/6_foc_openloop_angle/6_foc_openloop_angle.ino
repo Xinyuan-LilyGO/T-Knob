@@ -48,7 +48,7 @@ void setPwm(float Ua, float Ub, float Uc) {
   dc_a = (dc_a * 100 * 255) / 100;
   dc_b = (dc_b * 100 * 255) / 100;
   dc_c = (dc_c * 100 * 255) / 100;
-  // printf("%d,%d,%d\n", (int)dc_a, (int)dc_b, (int)dc_c);
+  printf("%d,%d,%d\n", (int)dc_a, (int)dc_b, (int)dc_c);
   drive.setPwmValue((int)dc_a, (int)dc_b, (int)dc_c);
 }
 
@@ -83,7 +83,7 @@ float angleOpenloop(float target_angle) {
   float Uq = voltage_power_supply / 3;  
 
   setPhaseVoltage(Uq, 0, _electricalAngle(_normalizeAngle(shaft_angle), 7));  // set the maximal allowed voltage (voltage_limit) with the necessary angle
-   printf("%0.3f, %0.3f\n", Uq, _electricalAngle(_normalizeAngle(shaft_angle), 7));
+  //  printf("%0.3f,%0.3f\n", Uq, _electricalAngle(_normalizeAngle(shaft_angle), 7));
   open_loop_timestamp = now_us;  // save timestamp for next call
 
   return Uq;

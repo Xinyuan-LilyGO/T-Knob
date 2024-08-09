@@ -77,7 +77,7 @@ void setPwm(float Ua, float Ub, float Uc) {
   dc_a = (dc_a * 100 * 255) / 100;
   dc_b = (dc_b * 100 * 255) / 100;
   dc_c = (dc_c * 100 * 255) / 100;
-  printf("%d, %d, %d\n", (int)dc_a, (int)dc_b, (int)dc_c);
+  printf("%d,%d,%d\n", (int)dc_a, (int)dc_b, (int)dc_c);
   drive.setPwmValue((int)dc_a, (int)dc_b, (int)dc_c);
 }
 
