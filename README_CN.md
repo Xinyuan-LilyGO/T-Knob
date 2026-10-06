@@ -43,3 +43,9 @@
 
 4. Finally click update :arrow_right: to download the program.
 
+
+- [T-MotorDriver-C6 V1.0](./hardware/T-MotorDriver-C6%20V1.0.pdf)
+- [MT6701](./hardware/MT6701_Rev.1.0.pdf)
+- [TMC6300](./hardware/TMC6300_datasheet_rev1.08.pdf)
+- [3D Files](./3D_File/H718-20240809.stp)
+

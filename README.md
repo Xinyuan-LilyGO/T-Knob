@@ -103,10 +103,7 @@ Other data is placed in the `hardware` folder
 
 For more information, see the `./hardware` directory.
 
-Schematic : [T-Embed-CC1101](./hardware/T-Embed-CC1101%20V1.0%2024-07-29.pdf)
-
-CC1101 Schematic : [CC1101](./hardware/cc1101-shield.pdf)
-
-CC1101 Pins : [CC1101 Pins](./hardware/CC1101_pin.png)
-
-3D Files : To be added ...
+- [T-MotorDriver-C6 V1.0](./hardware/T-MotorDriver-C6%20V1.0.pdf)
+- [MT6701](./hardware/MT6701_Rev.1.0.pdf)
+- [TMC6300](./hardware/TMC6300_datasheet_rev1.08.pdf)
+- [3D Files](./3D_File/H718-20240809.stp)
